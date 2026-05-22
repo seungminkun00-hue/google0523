@@ -117,7 +117,7 @@ const WIDGET_DETAILS = {
 
 // --- 3D 로봇 암 컴포넌트 (무광 회색, 이상 시 파트별 깜박) ---
 const RobotArm = ({ isAnomaly, onPartClick }) => {
-  const { scene: obj } = useGLTF('/Rmk3.glb');
+  const { scene: obj } = useGLTF(import.meta.env.BASE_URL + 'Rmk3.glb');
   const groupRef = useRef(null);
   const meshesRef = useRef([]);
   const flashingPartsRef = useRef([]);
@@ -487,7 +487,7 @@ const RobotDashboard = () => {
         }}>
           {/* 현대 로고 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <img src="/hyundai_logo.png" alt="Hyundai" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+            <img src={import.meta.env.BASE_URL + "hyundai_logo.png"} alt="Hyundai" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
           </div>
 
           {/* 중앙 세그먼트 버튼 */}

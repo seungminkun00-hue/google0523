@@ -18,7 +18,7 @@ const ARM_PARENT_NAMES = [
 
 // --- 3D 공장 모델 컴포넌트 ---
 const FactoryModel = ({ onArmClick, isAnomaly }) => {
-  const { scene } = useGLTF('/factory.glb');
+  const { scene } = useGLTF(import.meta.env.BASE_URL + 'factory.glb');
   const groupRef = useRef();
   const [hoveredArm, setHoveredArm] = useState(null);
   const originalMaterials = useRef(new Map());
@@ -408,7 +408,7 @@ const FactoryMap = () => {
           marginBottom: '20px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <img src="/hyundai_logo.png" alt="Hyundai" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+            <img src={import.meta.env.BASE_URL + "hyundai_logo.png"} alt="Hyundai" style={{ height: '36px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
           </div>
 
           <div style={{ display: 'flex', backgroundColor: '#0B1A30', padding: '6px', borderRadius: '30px', gap: '5px' }}>
