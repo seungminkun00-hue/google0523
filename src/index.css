@@ -1,0 +1,218 @@
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 115%;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+  background-color: #020b18; /* Very dark navy background */
+  color: #ffffff;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Animations */
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseRed {
+  0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+
+@keyframes float1 {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -60px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes float2 {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-50px, 70px) scale(0.9); }
+  66% { transform: translate(40px, -40px) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.card {
+  border-radius: 33px;
+  background: linear-gradient(127deg, rgba(6, 11, 40, 0.94) 19.41%, rgba(10, 14, 35, 0.49) 76.65%);
+  backdrop-filter: blur(45px);
+  -webkit-backdrop-filter: blur(45px);
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 122, 255, 0.12);
+  border-color: rgba(0, 122, 255, 0.25);
+}
+
+.card.no-hover {
+  cursor: default;
+}
+.card.no-hover:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Segmented Control styles */
+.segmented-control {
+  display: flex;
+  background: #0B192C;
+  border-radius: 20px;
+  padding: 4px;
+}
+
+.segment-btn {
+  background: transparent;
+  color: #718096;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.segment-btn.active {
+  background: #1A365D; /* Active blue */
+  color: #ffffff;
+}
+
+.yellow-btn {
+  background: #FAFF00;
+  color: #000000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.yellow-btn:hover {
+  background: #e6eb00;
+}
+
+.yellow-btn.danger {
+  background: #FF3B30;
+  color: #ffffff;
+}
+
+/* AI Workflow Confirm Button */
+.confirm-btn {
+  background: linear-gradient(135deg, #FF3B30 0%, #D70015 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.confirm-btn.pulse {
+  animation: pulseRed 2s infinite;
+}
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Floating overlay */
+.floating-overlay {
+  background: rgba(11, 25, 44, 0.8);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+/* Progress bar */
+.progress-bg {
+  height: 6px;
+  background: #1A365D;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #007AFF;
+  transition: width 0.5s ease;
+}
+
+/* Semi Circle Gauge (Power & AI Health) */
+.semi-circle-gauge {
+  position: relative;
+  width: 140px;
+  height: 70px;
+  overflow: hidden;
+  margin: 0 auto;
+}
+.semi-circle-bg {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 10px solid #1A365D;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+}
+.semi-circle-fill {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 10px solid #007AFF;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+  transform-origin: 50% 50%;
+  transition: transform 0.5s ease;
+}
