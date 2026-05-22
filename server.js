@@ -17,36 +17,12 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// 메일 전송 transporter 설정
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SENDER_EMAIL,
-    pass: process.env.SENDER_PASSWORD,
-  },
-});
-
 // 이메일 발송 API
 app.post('/api/send-email', async (req, res) => {
   const data = req.body;
   console.log('이메일 전송 요청 수신:', data);
 
-  // 환경변수가 기입되지 않았을 때의 예외 처리
-  if (
-    !process.env.SENDER_EMAIL ||
-    process.env.SENDER_EMAIL === 'your_email@gmail.com' ||
-    !process.env.SENDER_PASSWORD ||
-    process.env.SENDER_PASSWORD === 'your_app_password'
-  ) {
-    console.warn('⚠️ .env 파일에 실제 이메일 계정 정보가 등록되지 않았습니다.');
-    return res.status(400).json({
-      success: false,
-      message: '서버 .env 파일에 실제 Gmail 계정 및 앱 비밀번호가 설정되지 않았습니다. 계정 설정을 먼저 완료해주세요.',
-    });
-  }
+// (기존 .env 이메일/비밀번호 검증 로직 제거 - 이제 GAS를 사용하므로 불필요)
 
   // HTML 형식의 프리미엄 이메일 템플릿 생성
   const htmlContent = `
@@ -134,20 +110,28 @@ app.post('/api/send-email', async (req, res) => {
     </html>
   `;
 
-  // 메일 내용 옵션 설정
-  const mailOptions = {
-    from: `"Hyundai Robot Control" <${process.env.SENDER_EMAIL}>`,
+  // Google Apps Script 서버를 통한 이메일 전송 (차단 없는 100% 안전한 통로)
+  const gasUrl = 'https://script.google.com/macros/s/AKfycbwWYKXfQowRNq8pYuMZ842tKuOUQFd4NP-YrJYzGMoB_q-ZAa8s_jFL8y5EYYWIRlzSsQ/exec';
+  const payload = {
     to: data.recipientEmail,
     subject: `[🚨 설비 이상 감지 및 정비 지시] ${data.machineName} (${data.location})`,
     html: htmlContent,
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('이메일 발송 완료:', info.messageId);
-    res.status(200).json({ success: true, messageId: info.messageId });
+    const response = await fetch(gasUrl, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    
+    if (response.ok) {
+      console.log('GAS 구글 서버를 통한 이메일 자동 발송 성공!');
+      res.status(200).json({ success: true });
+    } else {
+      throw new Error(`Google Script Error: ${response.statusText}`);
+    }
   } catch (error) {
-    console.error('Nodemailer 메일 발송 중 오류:', error);
+    console.error('GAS 구글 서버 메일 발송 중 오류:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
