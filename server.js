@@ -156,7 +156,7 @@ app.post('/api/send-email', async (req, res) => {
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // SPA 라우팅 지원: 정의되지 않은 모든 GET 요청을 index.html로 연결
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
