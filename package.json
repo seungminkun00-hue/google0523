@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev:frontend": "vite",
     "dev:backend": "nodemon server.js",
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build": "vite build",
+    "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.js"
   },
@@ -30,6 +33,7 @@
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^9.2.1",
+    "gh-pages": "^6.3.0",
     "nodemon": "^3.1.14",
     "vite": "^5.2.0"
   }

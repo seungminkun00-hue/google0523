@@ -798,26 +798,60 @@ const RobotDashboard = () => {
                           };
 
                           try {
-                            // 배포 및 로컬 프록시를 위해 상대 경로 사용
-                            const response = await fetch('/api/send-email', {
+                            const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"></head>
+    <body style="font-family: 'Malgun Gothic', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #e1e8ed;">
+        <div style="background-color: #002C5F; color: #ffffff; padding: 25px; text-align: center;">
+          <h2 style="margin: 0; font-size: 20px;">🚨 설비 이상 감지 및 정비 승인 통보</h2>
+        </div>
+        <div style="padding: 30px;">
+          <div style="background-color: #FFF5F5; border-left: 4px solid #FF3B30; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+            <strong style="color: #FF3B30; font-size: 15px; display: block; margin-bottom: 5px;">⚠️ AI 에이전트 진단 내용:</strong>
+            <span style="color: #4A5568; font-size: 14px; line-height: 1.6;">${emailData.aiDiagnosis}</span>
+          </div>
+          <h3 style="font-size: 16px; border-bottom: 2px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 15px;">📊 설비 상세 정보</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;">
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; width: 35%;">설비 모델명</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; font-weight: bold;">${emailData.machineName}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7;">위치 (라인)</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; font-weight: bold;">${emailData.location}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7;">실시간 진동수</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; color: #FF3B30; font-weight: bold;">${emailData.vibration} mm/s</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7;">실시간 전류</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; color: #E53E3E; font-weight: bold;">${emailData.current} A</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7;">온도</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; color: #E53E3E; font-weight: bold;">${emailData.temperature} °C</td></tr>
+          </table>
+          <h3 style="font-size: 16px; border-bottom: 2px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 15px;">🛠️ 자동 수립 조치 및 정비 정보</h3>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px;">
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; width: 35%;">매칭 정비사</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; font-weight: bold;">${emailData.technician}</td></tr>
+            <tr><td style="padding: 10px; border-bottom: 1px solid #EDF2F7;">필요 자재/부품</td><td style="padding: 10px; border-bottom: 1px solid #EDF2F7; color: #3182CE; font-weight: bold;">${emailData.sparePart}</td></tr>
+          </table>
+        </div>
+      </div>
+    </body>
+    </html>
+                            `;
+
+                            const payload = {
+                              to: emailData.recipientEmail,
+                              subject: `[🚨 설비 이상 감지 및 정비 지시] ${emailData.machineName} (${emailData.location})`,
+                              html: htmlContent
+                            };
+
+                            const gasUrl = 'https://script.google.com/macros/s/AKfycbwWYKXfQowRNq8pYuMZ842tKuOUQFd4NP-YrJYzGMoB_q-ZAa8s_jFL8y5EYYWIRlzSsQ/exec';
+                            
+                            // CORS 오류를 방지하기 위해 mode: 'no-cors' 사용 및 text/plain으로 전송
+                            await fetch(gasUrl, {
                               method: 'POST',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify(emailData),
+                              mode: 'no-cors',
+                              headers: { 'Content-Type': 'text/plain' },
+                              body: JSON.stringify(payload)
                             });
 
-                            const result = await response.json();
-
-                            if (response.ok) {
-                              alert('정비 발주 승인 및 관정비사에게 이메일(HTML) 전송이 완료되었습니다.');
-                              setIsAnomaly(false);
-                            } else {
-                              alert(`메일 전송 실패: ${result.message || '서버 오류'}`);
-                            }
+                            alert('정비 발주 승인 및 담당 정비사에게 이메일(HTML) 전송이 완료되었습니다.');
+                            setIsAnomaly(false);
                           } catch (error) {
                             console.error('메일 전송 API 오류:', error);
-                            alert('백엔드 서버(Port 5000) 연결에 실패했습니다. 서버가 실행 중인지 확인하세요.');
+                            alert('메일 전송 중 네트워크 오류가 발생했습니다.');
                           } finally {
                             setIsSending(false);
                           }
